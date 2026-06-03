@@ -3,9 +3,13 @@ package com.example.calculatorpro.data.repository
 import com.example.calculatorpro.data.database.BudgetDao
 import com.example.calculatorpro.data.database.CurrencyDao
 import com.example.calculatorpro.data.database.HistoryDao
+import com.example.calculatorpro.data.database.WidgetSettingsDao
+import com.example.calculatorpro.data.database.BudgetHistoryDao
 import com.example.calculatorpro.data.model.BudgetLedgerEntity
 import com.example.calculatorpro.data.model.CurrencyRateEntity
 import com.example.calculatorpro.data.model.HistoryEntity
+import com.example.calculatorpro.data.model.WidgetSettingsEntity
+import com.example.calculatorpro.data.model.BudgetHistoryEntity
 import com.example.calculatorpro.data.network.CurrencyApi
 import com.example.calculatorpro.domain.repository.CalculatorRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +18,8 @@ class CalculatorRepositoryImpl(
     private val historyDao: HistoryDao,
     private val currencyDao: CurrencyDao,
     private val budgetDao: BudgetDao,
+    private val widgetSettingsDao: WidgetSettingsDao,
+    private val budgetHistoryDao: BudgetHistoryDao,
     private val api: CurrencyApi
 ) : CalculatorRepository {
 
@@ -66,4 +72,27 @@ class CalculatorRepositoryImpl(
     override suspend fun updateBudget(budget: BudgetLedgerEntity) {
         budgetDao.insertOrUpdateBudget(budget)
     }
+
+    override fun getWidgetSettingsFlow(): Flow<WidgetSettingsEntity?> = widgetSettingsDao.getSettingsFlow()
+
+    override suspend fun getWidgetSettings(): WidgetSettingsEntity? = widgetSettingsDao.getSettings()
+
+    override suspend fun updateWidgetSettings(settings: WidgetSettingsEntity) {
+        widgetSettingsDao.insertOrUpdateSettings(settings)
+    }
+
+    override fun getAllBudgetHistory(): Flow<List<BudgetHistoryEntity>> = budgetHistoryDao.getAllBudgetHistory()
+
+    override suspend fun insertBudgetHistory(item: BudgetHistoryEntity) {
+        budgetHistoryDao.insertBudgetHistory(item)
+    }
+
+    override suspend fun updateBudgetHistory(item: BudgetHistoryEntity) {
+        budgetHistoryDao.updateBudgetHistory(item)
+    }
+
+    override suspend fun deleteBudgetHistory(item: BudgetHistoryEntity) {
+        budgetHistoryDao.deleteBudgetHistory(item)
+    }
 }
+

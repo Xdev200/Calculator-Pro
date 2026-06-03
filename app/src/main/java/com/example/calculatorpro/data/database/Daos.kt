@@ -4,6 +4,7 @@ import androidx.room.*
 import com.example.calculatorpro.data.model.BudgetLedgerEntity
 import com.example.calculatorpro.data.model.CurrencyRateEntity
 import com.example.calculatorpro.data.model.HistoryEntity
+import com.example.calculatorpro.data.model.WidgetSettingsEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -43,4 +44,31 @@ interface BudgetDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdateBudget(budget: BudgetLedgerEntity)
+}
+
+@Dao
+interface WidgetSettingsDao {
+    @Query("SELECT * FROM widget_settings_table WHERE id = 1 LIMIT 1")
+    fun getSettingsFlow(): Flow<WidgetSettingsEntity?>
+
+    @Query("SELECT * FROM widget_settings_table WHERE id = 1 LIMIT 1")
+    suspend fun getSettings(): WidgetSettingsEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdateSettings(settings: WidgetSettingsEntity)
+}
+
+@Dao
+interface BudgetHistoryDao {
+    @Query("SELECT * FROM budget_history_table ORDER BY timestamp DESC")
+    fun getAllBudgetHistory(): Flow<List<com.example.calculatorpro.data.model.BudgetHistoryEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBudgetHistory(item: com.example.calculatorpro.data.model.BudgetHistoryEntity)
+
+    @Update
+    suspend fun updateBudgetHistory(item: com.example.calculatorpro.data.model.BudgetHistoryEntity)
+
+    @Delete
+    suspend fun deleteBudgetHistory(item: com.example.calculatorpro.data.model.BudgetHistoryEntity)
 }

@@ -20,6 +20,8 @@ class CurrencySyncWorker(
                 database.historyDao(),
                 database.currencyDao(),
                 database.budgetDao(),
+                database.widgetSettingsDao(),
+                database.budgetHistoryDao(),
                 api
             )
             val success = repository.fetchAndSaveRates()

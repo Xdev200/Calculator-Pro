@@ -1,5 +1,6 @@
 package com.example.calculatorpro
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,11 +25,14 @@ import com.example.calculatorpro.domain.usecase.FinancialEmiUseCase
 import com.example.calculatorpro.domain.usecase.UnitConversionUseCase
 import com.example.calculatorpro.theme.CalculatorProTheme
 import com.example.calculatorpro.ui.mvi.AppTheme
+import com.example.calculatorpro.ui.mvi.CalculatorIntent
 import com.example.calculatorpro.ui.screens.MainScreen
 import com.example.calculatorpro.ui.viewmodel.CalculatorViewModel
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
+    private lateinit var viewModel: CalculatorViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,18 +43,23 @@ class MainActivity : ComponentActivity() {
             database.historyDao(),
             database.currencyDao(),
             database.budgetDao(),
+            database.widgetSettingsDao(),
+            database.budgetHistoryDao(),
             api
         )
         val evaluateUseCase = EvaluateExpressionUseCase()
         val conversionUseCase = UnitConversionUseCase()
         val emiUseCase = FinancialEmiUseCase()
 
-        val viewModel = CalculatorViewModel(
+        viewModel = CalculatorViewModel(
             repository,
             evaluateUseCase,
             conversionUseCase,
             emiUseCase
         )
+
+        // Handle widget configure intent (from widget ⚙️ button)
+        handleWidgetConfigureIntent(intent)
 
         // Schedule Daily WorkManager Task
         scheduleDailyCurrencySync()
@@ -71,6 +80,19 @@ class MainActivity : ComponentActivity() {
                     MainScreen(viewModel = viewModel)
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // Handle widget configure intent when activity is already running (singleTop)
+        handleWidgetConfigureIntent(intent)
+    }
+
+    private fun handleWidgetConfigureIntent(intent: Intent?) {
+        val widgetConfigTarget = intent?.getStringExtra("WIDGET_CONFIGURE")
+        if (widgetConfigTarget != null) {
+            viewModel.processIntent(CalculatorIntent.SetWidgetConfigureTarget(widgetConfigTarget))
         }
     }
 

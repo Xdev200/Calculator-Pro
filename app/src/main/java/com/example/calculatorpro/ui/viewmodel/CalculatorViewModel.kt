@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.calculatorpro.data.model.BudgetLedgerEntity
 import com.example.calculatorpro.data.model.CurrencyRateEntity
 import com.example.calculatorpro.data.model.HistoryEntity
+import com.example.calculatorpro.data.model.WidgetSettingsEntity
 import com.example.calculatorpro.domain.repository.CalculatorRepository
 import com.example.calculatorpro.domain.usecase.EvaluateExpressionUseCase
 import com.example.calculatorpro.domain.usecase.FinancialEmiUseCase
@@ -53,12 +54,42 @@ class CalculatorViewModel(
                     _state.update {
                         it.copy(
                             budgetLimit = budget.capAmount,
-                            budgetSpent = budget.spentAmount
+                            budgetSpent = budget.spentAmount,
+                            budgetCurrency = budget.currencySymbol
                         )
                     }
                 } else {
-                    // Save default budget ledger
-                    repository.updateBudget(BudgetLedgerEntity(1, 200.0, 0.0, System.currentTimeMillis()))
+                    repository.updateBudget(BudgetLedgerEntity(1, 200.0, 0.0, System.currentTimeMillis(), "$"))
+                }
+            }
+        }
+
+        // Collect budget history and auto-update spentAmount
+        viewModelScope.launch {
+            repository.getAllBudgetHistory().collect { list ->
+                _state.update { it.copy(budgetHistoryList = list) }
+                val totalSpent = list.sumOf { it.amountDeducted }
+                val currentBudget = repository.getBudget()
+                if (currentBudget != null && currentBudget.spentAmount != totalSpent) {
+                    repository.updateBudget(currentBudget.copy(spentAmount = totalSpent))
+                }
+            }
+        }
+
+        // Collect widget settings
+        viewModelScope.launch {
+            repository.getWidgetSettingsFlow().collect { settings ->
+                if (settings != null) {
+                    _state.update {
+                        it.copy(
+                            widgetConversionCategory = settings.conversionCategory,
+                            widgetConversionFromUnit = settings.conversionFromUnit,
+                            widgetConversionToUnit = settings.conversionToUnit,
+                            widgetCurrencyPairs = settings.currencyPairs
+                        )
+                    }
+                } else {
+                    repository.updateWidgetSettings(WidgetSettingsEntity())
                 }
             }
         }
@@ -77,11 +108,13 @@ class CalculatorViewModel(
             CurrencyRateEntity("cny", 7.25, timestamp)
         )
         repository.insertRates(defaultRates)
-        repository.updateBudget(BudgetLedgerEntity(1, 200.0, 0.0, timestamp)) // Ensure budget exists
+        repository.updateBudget(BudgetLedgerEntity(1, 200.0, 0.0, timestamp, "$")) // Ensure budget exists
+        repository.updateWidgetSettings(WidgetSettingsEntity()) // Ensure widget settings exist
         viewModelScope.launch(Dispatchers.IO) {
             repository.fetchAndSaveRates()
         }
     }
+
 
     fun processIntent(intent: CalculatorIntent) {
         viewModelScope.launch {
@@ -316,29 +349,77 @@ class CalculatorViewModel(
                 }
 
                 // Budget tracker updates
-                is CalculatorIntent.UpdateBudgetLimit -> {
+                is CalculatorIntent.UpdateBudgetSettings -> {
                     val currentLimit = intent.limit
+                    val currentSymbol = intent.currencySymbol
                     val currentSpent = _state.value.budgetSpent
                     repository.updateBudget(
                         BudgetLedgerEntity(
                             id = 1,
                             capAmount = currentLimit,
                             spentAmount = currentSpent,
-                            lastUpdated = System.currentTimeMillis()
+                            lastUpdated = System.currentTimeMillis(),
+                            currencySymbol = currentSymbol
                         )
                     )
                 }
                 is CalculatorIntent.DeductBudgetAmount -> {
                     val currentLimit = _state.value.budgetLimit
+                    val currentSymbol = _state.value.budgetCurrency
                     val newSpent = _state.value.budgetSpent + intent.amount
                     repository.updateBudget(
                         BudgetLedgerEntity(
                             id = 1,
                             capAmount = currentLimit,
                             spentAmount = newSpent,
-                            lastUpdated = System.currentTimeMillis()
+                            lastUpdated = System.currentTimeMillis(),
+                            currencySymbol = currentSymbol
                         )
                     )
+                    repository.insertBudgetHistory(
+                        com.example.calculatorpro.data.model.BudgetHistoryEntity(
+                            timestamp = System.currentTimeMillis(),
+                            amountDeducted = intent.amount,
+                            note = intent.note
+                        )
+                    )
+                }
+                is CalculatorIntent.SetBudgetHistoryVisibility -> {
+                    _state.update { it.copy(isBudgetHistoryVisible = intent.visible) }
+                }
+                is CalculatorIntent.AddBudgetHistoryEntry -> {
+                    repository.insertBudgetHistory(
+                        com.example.calculatorpro.data.model.BudgetHistoryEntity(
+                            timestamp = System.currentTimeMillis(),
+                            amountDeducted = intent.amount,
+                            note = intent.note
+                        )
+                    )
+                }
+                is CalculatorIntent.UpdateBudgetHistoryEntry -> {
+                    repository.updateBudgetHistory(intent.entity)
+                }
+                is CalculatorIntent.DeleteBudgetHistoryEntry -> {
+                    repository.deleteBudgetHistory(intent.entity)
+                }
+                is CalculatorIntent.UpdateWidgetConversionSettings -> {
+                    val current = repository.getWidgetSettings() ?: WidgetSettingsEntity()
+                    repository.updateWidgetSettings(
+                        current.copy(
+                            conversionCategory = intent.category,
+                            conversionFromUnit = intent.fromUnit,
+                            conversionToUnit = intent.toUnit
+                        )
+                    )
+                }
+                is CalculatorIntent.UpdateCurrencyPairSettings -> {
+                    val current = repository.getWidgetSettings() ?: WidgetSettingsEntity()
+                    repository.updateWidgetSettings(
+                        current.copy(currencyPairs = intent.currencyPairs)
+                    )
+                }
+                is CalculatorIntent.SetWidgetConfigureTarget -> {
+                    _state.update { it.copy(widgetConfigureTarget = intent.target) }
                 }
             }
         }

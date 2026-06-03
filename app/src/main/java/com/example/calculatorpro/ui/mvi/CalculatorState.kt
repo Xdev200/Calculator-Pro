@@ -3,6 +3,7 @@ package com.example.calculatorpro.ui.mvi
 import com.example.calculatorpro.data.model.BudgetLedgerEntity
 import com.example.calculatorpro.data.model.CurrencyRateEntity
 import com.example.calculatorpro.data.model.HistoryEntity
+import com.example.calculatorpro.data.model.BudgetHistoryEntity
 
 enum class CalculatorMode {
     STANDARD, SCIENTIFIC, CURRENCY, METRIC, EMI
@@ -41,5 +42,19 @@ data class CalculatorState(
 
     // Budget Tracker (ledger status tracking)
     val budgetLimit: Double = 200.0,
-    val budgetSpent: Double = 0.0
+    val budgetSpent: Double = 0.0,
+    val budgetCurrency: String = "$",
+    val budgetHistoryList: List<BudgetHistoryEntity> = emptyList(),
+    val isBudgetHistoryVisible: Boolean = false,
+
+    // Widget Config state
+    val widgetConversionCategory: String = "Mass",
+    val widgetConversionFromUnit: String = "Pounds",
+    val widgetConversionToUnit: String = "Kilograms",
+
+    // Currency Snapshot configurable pairs (comma-separated codes, base is always USD)
+    val widgetCurrencyPairs: String = "INR,EUR,GBP",
+
+    // Widget configure target (set when launched from widget ⚙️ button)
+    val widgetConfigureTarget: String? = null
 )

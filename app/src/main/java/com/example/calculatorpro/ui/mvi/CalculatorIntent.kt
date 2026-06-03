@@ -33,6 +33,17 @@ sealed class CalculatorIntent {
     object CalculateEmiResult : CalculatorIntent()
 
     // Budget Tracker intents
-    data class UpdateBudgetLimit(val limit: Double) : CalculatorIntent()
-    data class DeductBudgetAmount(val amount: Double) : CalculatorIntent()
+    data class UpdateBudgetSettings(val limit: Double, val currencySymbol: String) : CalculatorIntent()
+    data class DeductBudgetAmount(val amount: Double, val note: String = "App Deduction") : CalculatorIntent()
+    data class SetBudgetHistoryVisibility(val visible: Boolean) : CalculatorIntent()
+    data class AddBudgetHistoryEntry(val amount: Double, val note: String) : CalculatorIntent()
+    data class UpdateBudgetHistoryEntry(val entity: com.example.calculatorpro.data.model.BudgetHistoryEntity) : CalculatorIntent()
+    data class DeleteBudgetHistoryEntry(val entity: com.example.calculatorpro.data.model.BudgetHistoryEntity) : CalculatorIntent()
+
+    // Widget Config intents
+    data class UpdateWidgetConversionSettings(val category: String, val fromUnit: String, val toUnit: String) : CalculatorIntent()
+    data class UpdateCurrencyPairSettings(val currencyPairs: String) : CalculatorIntent()
+
+    // Widget configure target (set when app launched from widget ⚙️ button)
+    data class SetWidgetConfigureTarget(val target: String?) : CalculatorIntent()
 }

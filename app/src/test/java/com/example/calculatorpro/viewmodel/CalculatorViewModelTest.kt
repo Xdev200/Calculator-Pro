@@ -3,6 +3,7 @@ package com.example.calculatorpro.viewmodel
 import com.example.calculatorpro.data.model.BudgetLedgerEntity
 import com.example.calculatorpro.data.model.CurrencyRateEntity
 import com.example.calculatorpro.data.model.HistoryEntity
+import com.example.calculatorpro.data.model.WidgetSettingsEntity
 import com.example.calculatorpro.domain.repository.CalculatorRepository
 import com.example.calculatorpro.domain.usecase.EvaluateExpressionUseCase
 import com.example.calculatorpro.domain.usecase.FinancialEmiUseCase
@@ -137,6 +138,13 @@ class CalculatorViewModelTest {
         override suspend fun getBudget(): BudgetLedgerEntity? = budget.value
         override suspend fun updateBudget(budget: BudgetLedgerEntity) {
             this.budget.update { budget }
+        }
+
+        private val settings = MutableStateFlow<WidgetSettingsEntity?>(null)
+        override fun getWidgetSettingsFlow(): Flow<WidgetSettingsEntity?> = settings
+        override suspend fun getWidgetSettings(): WidgetSettingsEntity? = settings.value
+        override suspend fun updateWidgetSettings(settings: WidgetSettingsEntity) {
+            this.settings.update { settings }
         }
     }
 }

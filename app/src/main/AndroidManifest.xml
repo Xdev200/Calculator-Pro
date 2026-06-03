@@ -13,35 +13,23 @@
         android:theme="@style/Theme.CalculatorPro">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Glance Widgets Providers -->
-        <receiver android:name=".widget.FunctionVisualizerReceiver"
-            android:label="Visualizer Widget"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info_function_visualizer" />
-        </receiver>
+        <activity
+            android:name=".widget.WidgetInputDialogActivity"
+            android:theme="@style/Theme.Transparent"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:launchMode="singleInstance"
+            android:exported="false" />
 
-        <receiver android:name=".widget.PriceCalculatorReceiver"
-            android:label="Price Widget"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info_price_calculator" />
-        </receiver>
+        <!-- Glance Widgets Providers -->
 
         <receiver android:name=".widget.CurrencySnapshotReceiver"
             android:label="Currency Snapshot Widget"
