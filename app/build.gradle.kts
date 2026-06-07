@@ -3,7 +3,7 @@ plugins {
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
+  alias(libs.plugins.ksp)
 }
 
 android {
@@ -16,11 +16,22 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+    signingConfigs {
+        create("release") {
+            storeFile = file("release.keystore")
+            storePassword = "password"
+            keyAlias = "calculator_key"
+            keyPassword = "password"
+            enableV1Signing = true
+            enableV2Signing = true
+        }
+    }
 
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -88,7 +99,7 @@ dependencies {
   // Room
   implementation(libs.androidx.room.runtime)
   implementation(libs.androidx.room.ktx)
-  kapt(libs.androidx.room.compiler)
+  ksp(libs.androidx.room.compiler)
 
   // Ktor Client
   implementation(libs.ktor.client.core)
@@ -108,4 +119,7 @@ dependencies {
 
   // Kotlinx Serialization JSON
   implementation(libs.kotlinx.serialization.json)
+
+  // Splash Screen API
+  implementation("androidx.core:core-splashscreen:1.0.1")
 }

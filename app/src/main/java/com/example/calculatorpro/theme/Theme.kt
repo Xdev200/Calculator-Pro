@@ -5,36 +5,43 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = DarkAccent,
+    primary = DarkPrimary,
+    onPrimary = DarkOnPrimary,
+    primaryContainer = DarkPrimaryContainer,
+    onPrimaryContainer = DarkOnPrimaryContainer,
+    secondary = DarkSecondary,
+    onSecondary = DarkOnSecondary,
+    secondaryContainer = DarkSecondaryContainer,
+    onSecondaryContainer = DarkOnSecondaryContainer,
     background = DarkBackground,
-    surface = DarkDisplayArea,
-    onPrimary = Color.White,
-    onBackground = DarkText,
-    onSurface = DarkText,
-    surfaceVariant = DarkKeyStandard,
-    primaryContainer = DarkKeyOperator,
-    secondaryContainer = DarkKeyScientific,
-    onSurfaceVariant = DarkText,
-    onPrimaryContainer = Color.White,
-    onSecondaryContainer = DarkText
+    onBackground = DarkOnBackground,
+    surface = DarkSurface,
+    onSurface = DarkOnSurface,
+    surfaceVariant = DarkSurfaceVariant,
+    error = DarkError,
+    onError = DarkOnError,
+    outline = DarkOutline
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = LightAccent,
+    primary = LightPrimary,
+    onPrimary = LightOnPrimary,
+    primaryContainer = LightPrimaryContainer,
+    onPrimaryContainer = LightOnPrimaryContainer,
+    secondary = LightSecondary,
+    onSecondary = LightOnSecondary,
+    secondaryContainer = LightSecondaryContainer,
+    onSecondaryContainer = LightOnSecondaryContainer,
     background = LightBackground,
-    surface = LightDisplayArea,
-    onPrimary = Color.White,
-    onBackground = LightText,
-    onSurface = LightText,
-    surfaceVariant = LightKeyStandard,
-    primaryContainer = LightKeyOperator,
-    secondaryContainer = LightKeyScientific,
-    onSurfaceVariant = LightText,
-    onPrimaryContainer = Color.White,
-    onSecondaryContainer = LightText
+    onBackground = LightOnBackground,
+    surface = LightSurface,
+    onSurface = LightOnSurface,
+    surfaceVariant = LightSurfaceVariant,
+    error = LightError,
+    onError = LightOnError,
+    outline = LightOutline
 )
 
 @Composable
@@ -47,6 +54,7 @@ fun CalculatorProTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

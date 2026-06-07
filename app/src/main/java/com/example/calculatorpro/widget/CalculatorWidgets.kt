@@ -38,11 +38,12 @@ import kotlinx.coroutines.launch
 val convertValKey = doublePreferencesKey("convert_value")
 
 // Colors for dark minimalist theme
-val WidgetBg = ColorProvider(Color(0xFF121212))
-val AccentColor = ColorProvider(Color(0xFF2A5C91))
-val WhiteText = ColorProvider(Color(0xFFE0E0E0))
-val MutedText = ColorProvider(Color(0xFF8A8A8A))
-val AccentGlow = ColorProvider(Color(0xFF5A9CF0))
+val WidgetBg = ColorProvider(Color(0xFF131313))
+val AccentColor = ColorProvider(Color(0xFFFFB1C0))
+val OnAccentColor = ColorProvider(Color(0xFF660029))
+val WhiteText = ColorProvider(Color(0xFFE5E2E1))
+val MutedText = ColorProvider(Color(0xFFAB888E))
+val AccentGlow = ColorProvider(Color(0xFFFFB1C0))
 
 
 // ==========================================
@@ -109,13 +110,13 @@ class CurrencySnapshotWidget : GlanceAppWidget() {
                     Button(
                         text = "⚙️",
                         onClick = actionStartActivity(configureIntent),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = WhiteText)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = OnAccentColor)
                     )
                     Spacer(modifier = GlanceModifier.width(4.dp))
                     Button(
                         text = "Sync",
                         onClick = actionRunCallback<SyncRatesCallback>(),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = WhiteText)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = OnAccentColor)
                     )
                 }
 
@@ -215,7 +216,7 @@ class BudgetBurnWidget : GlanceAppWidget() {
                     Button(
                         text = "⚙️",
                         onClick = actionStartActivity(configureIntent),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = WhiteText)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = OnAccentColor)
                     )
                     Spacer(modifier = GlanceModifier.width(4.dp))
                     val inputIntent = Intent(context, WidgetInputDialogActivity::class.java).apply {
@@ -224,9 +225,9 @@ class BudgetBurnWidget : GlanceAppWidget() {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     }
                     Button(
-                        text = "Deduct...",
+                        text = "✏️",
                         onClick = actionStartActivity(inputIntent),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = WhiteText)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = OnAccentColor)
                     )
                 }
             }
@@ -291,13 +292,13 @@ class UnitConversionWidget : GlanceAppWidget() {
                     Button(
                         text = "⚙️",
                         onClick = actionStartActivity(configureIntent),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = WhiteText)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = OnAccentColor)
                     )
                     Spacer(modifier = GlanceModifier.width(4.dp))
                     Button(
                         text = "⇄",
                         onClick = actionRunCallback<SwapWidgetConversionCallback>(),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = WhiteText)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = OnAccentColor)
                     )
                     Spacer(modifier = GlanceModifier.width(4.dp))
                     val inputIntent = Intent(context, WidgetInputDialogActivity::class.java).apply {
@@ -306,9 +307,9 @@ class UnitConversionWidget : GlanceAppWidget() {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     }
                     Button(
-                        text = "Set...",
+                        text = "✏️",
                         onClick = actionStartActivity(inputIntent),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = WhiteText)
+                        colors = ButtonDefaults.buttonColors(backgroundColor = AccentColor, contentColor = OnAccentColor)
                     )
                 }
             }
